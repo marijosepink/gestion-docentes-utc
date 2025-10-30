@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Docentes UTC 👩‍🏫💻</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #8f8f8f;
+    }
+
+    header {
+      background-color: #00913f;
+      color: white;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header img {
+      height: 50px;
+      margin-right: 10px;
+    }
+
+    header h1 {
+      font-size: 1.8em;
+      margin: 0;
+    }
+
+    .contenedor-tabla {
+      margin: 30px auto;
+      width: 90%;
+      background-color: #ffffff;
+      border: 2px solid #474b4e;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #474b4e;
+      padding: 10px;
+      text-align: center;
+      font-weight: bold;
+      color: #000000;
+    }
+
+    th {
+      background-color: #00913f;
+      color: white;
+    }
+
+    button {
+      background-color: #00913f;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .contenedor-botones {
+      margin: 17px auto;
+      width: 90%;
+      background-color: #ffffff;
+      border: 2px solid #474b4e;
+      border-radius: 12px;
+      padding: 15px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .boton-descarga {
+      background-color: #c8f2b9;
+      color: #000000;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .boton-descarga:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div style="display:flex; align-items:center;">
+      <img src="logo-utc.png" alt="Logo UTC">
+      <h1>Gestión de Docentes UTC 👨‍🏫👩‍🏫💚</h1>
+    </div>
+  </header>
+
+  <div class="contenedor-tabla">
+    <table id="tablaDocentes">
+      <thead>
+        <tr>
+          <th>Número de Empleado</th>
+          <th>Especialidad</th>
+          <th>Nombre</th>
+          <th>Acciones ⚙️</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <br>
+    <button onclick="agregarDocente()">➕ Agregar Docente</button>
+  </div>
+
+  <div class="contenedor-botones">
+    <button class="boton-descarga" onclick="descargarXML()">📄 Descargar XML</button>
+    <button class="boton-descarga" onclick="descargarYAML()">📘 Descargar YAML</button>
+    <button class="boton-descarga" onclick="descargarJSON()">📗 Descargar JSON</button>
+  </div>
+
+  <script>
+    const docentes = [
+      { numeroEmpleado: '001', especialidad: 'Redes', nombre: 'Juan Pérez' },
+      { numeroEmpleado: '002', especialidad: 'Ciberseguridad', nombre: 'María López' }
+    ];
+
+    function renderTabla() {
+      const tbody = document.querySelector('#tablaDocentes tbody');
+      tbody.innerHTML = '';
+      docentes.forEach((d, i) => {
+        const row = `<tr>
+          <td>${d.numeroEmpleado}</td>
+          <td>${d.especialidad}</td>
+          <td>${d.nombre}</td>
+          <td>
+            <button onclick="editarDocente(${i})">✏️ Editar</button>
+            <button onclick="eliminarDocente(${i})">🗑️ Eliminar</button>
+          </td>
+        </tr>`;
+        tbody.innerHTML += row;
+      });
+    }
+
+    function agregarDocente() {
+      const numeroEmpleado = prompt('Ingrese el número de empleado:');
+      const especialidad = prompt('Ingrese la especialidad:');
+      const nombre = prompt('Ingrese el nombre:');
+      if (numeroEmpleado && especialidad && nombre) {
+        docentes.push({ numeroEmpleado, especialidad, nombre });
+        renderTabla();
+      }
+    }
+
+    function editarDocente(index) {
+      const docente = docentes[index];
+      docente.numeroEmpleado = prompt('Editar número de empleado:', docente.numeroEmpleado);
+      docente.especialidad = prompt('Editar especialidad:', docente.especialidad);
+      docente.nombre = prompt('Editar nombre:', docente.nombre);
+      renderTabla();
+    }
+
+    function eliminarDocente(index) {
+      if (confirm('¿Deseas eliminar este docente?')) {
+        docentes.splice(index, 1);
+        renderTabla();
+      }
+    }
+
+    function descargarArchivo(contenido, tipo, nombreArchivo) {
+      const blob = new Blob([contenido], { type: tipo });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = nombreArchivo;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function descargarXML() {
+      let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<docentes>\n';
+      docentes.forEach(d => {
+        xml += `  <docente>\n    <numeroEmpleado>${d.numeroEmpleado}</numeroEmpleado>\n    <nombre>${d.nombre}</nombre>\n    <especialidad>${d.especialidad}</especialidad>\n  </docente>\n`;
+      });
+      xml += '</docentes>';
+      descargarArchivo(xml, 'application/xml', 'docentes.xml');
+    }
+
+    function descargarYAML() {
+      let yaml = 'docentes:\n';
+      docentes.forEach(d => {
+        yaml += `  - numeroEmpleado: ${d.numeroEmpleado}\n    nombre: ${d.nombre}\n    especialidad: ${d.especialidad}\n`;
+      });
+      descargarArchivo(yaml, 'text/yaml', 'docentes.yaml');
+    }
+
+    function descargarJSON() {
+      const json = JSON.stringify({ docentes }, null, 2);
+      descargarArchivo(json, 'application/json', 'docentes.json');
+    }
+
+    renderTabla();
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../si/src/app"
+		},
+		{
+			"path": "../practicas/Repositorio/calculadora"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "calculadora"
+	}
+}
